@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <sys/types.h>
 
-/* use -D_GNU_SOURCE for compilation */
+#define BUF_SIZE 1024
 
 int main(int argc, char *argv[])
 {
@@ -32,8 +32,8 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	char buf[1024];
-	while ((nread = read(ifd, buf, 1024)) > 0) {
+	char buf[BUF_SIZE];
+	while ((nread = read(ifd, buf, BUF_SIZE)) > 0) {
 		for (int i = 0; i < nread; ++i) {
 			if (buf[i] == '\0') {
 				if (lseek(ofd, 1, SEEK_CUR) == -1) {
