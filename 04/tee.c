@@ -6,8 +6,6 @@
 
 #define BUF_SIZE 1024
 
-char buf[BUF_SIZE];
-
 int main(int argc, char *argv[])
 {
 	int opt;
@@ -46,13 +44,14 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
+	char buf[BUF_SIZE];
 	while ((nread = read(STDIN_FILENO, buf, BUF_SIZE)) > 0) {
 		if (write(STDOUT_FILENO, buf, nread) == -1) {
 			perror("write stdout");
 			exit(EXIT_FAILURE);
 		}
 
-		if (outfd && write(outfd, buf, nread) == -1) {
+		if (outfd && (write(outfd, buf, nread) != nread)) {
 			perror("write");
 			exit(EXIT_FAILURE);
 		}
