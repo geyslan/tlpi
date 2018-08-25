@@ -35,12 +35,17 @@ int main(int argc, char *argv[])
 	char buf[BUF_SIZE];
 	while ((nread = read(ifd, buf, BUF_SIZE)) > 0) {
 		for (int i = 0; i < nread; ++i) {
-			if (buf[i] == '\0') {
-				if (lseek(ofd, 1, SEEK_CUR) == -1) {
-					perror("lseek");
-					exit(EXIT_FAILURE);
-				}
-			} else if (write(ofd, &buf[i], 1) != 1) {
+			int j = i;
+			while (buf[j] == '\0' && j < nread)
+				++j;
+			if (lseek(ofd, j-i, SEEK_CUR) == -1) {
+				perror("lseek");
+				exit(EXIT_FAILURE);
+			}
+			if (j == nread)
+				break;
+			i = j;
+			if (write(ofd, &buf[i], 1) != 1) {
 				perror("write");
 				exit(EXIT_FAILURE);
 			}
