@@ -3,6 +3,9 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <fcntl.h>
+#include <sys/stat.h>
+#include "common.h"
+#include "error.h"
 
 #define BUF_SIZE 1024
 
@@ -16,21 +19,20 @@ int main(int argc, char *argv[])
 	int oflags = O_CREAT | O_WRONLY;
 	mode_t omode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
+	app_set_name(argv[0]);
+
 	while ((opt = getopt(argc, argv, "a")) != -1) {
 		switch (opt) {
 		case 'a':
 			append = 1;
 			break;
 		default:
-			fprintf(stderr, "Usage: %s -a file\n", argv[0]);
-			exit(EXIT_FAILURE);
+			errx("Usage: %s -a file", argv[0]);
 		}
 	}
 
-	if (append && optind >= argc) {
-		fprintf(stderr, "Expected argument after option\n");
-		exit(EXIT_FAILURE);
-	}
+	if (append && optind >= argc)
+		errx("Expected argument after option");
 
 	if (argc == 2) {
 		output = argv[1];
@@ -39,33 +41,23 @@ int main(int argc, char *argv[])
 		oflags |= O_APPEND;
 	}
 
-	if (output && (outfd = open(output, oflags, omode)) == -1) {
-		perror("open");
-		exit(EXIT_FAILURE);
-	}
+	if (output && (outfd = open(output, oflags, omode)) == -1)
+		errx("open");
 
 	char buf[BUF_SIZE];
 	while ((nread = read(STDIN_FILENO, buf, BUF_SIZE)) > 0) {
-		if (write(STDOUT_FILENO, buf, nread) == -1) {
-			perror("write stdout");
-			exit(EXIT_FAILURE);
-		}
+		if (write(STDOUT_FILENO, buf, nread) == -1)
+			errx("write stdout");
 
-		if (outfd && (write(outfd, buf, nread) != nread)) {
-			perror("write");
-			exit(EXIT_FAILURE);
-		}
+		if (outfd && (write(outfd, buf, nread) != nread))
+			errx("write");
 	}
 
-	if (nread == -1) {
-		perror("read");
-		exit(EXIT_FAILURE);
-	}
+	if (nread == -1)
+		errx("read");
 
-	if (outfd && close(outfd)) {
-		perror("close");
-		exit(EXIT_FAILURE);
-	}
+	if (outfd && close(outfd))
+		errx("close");
 
 	return 0;
 }
