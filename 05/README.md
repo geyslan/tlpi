@@ -33,3 +33,18 @@ $ ls -l f1 f2
 ```
 
 - Using the option `x` creates a race condition as the write calls are not atomic due the lack of O_APPEND. The time slice of the first process elapses before the writing comes to its end making the second process not to write in the rightful offset.
+
+### 5-4
+
+> Implement dup() and dup2() using fcntl() and, where necessary, close(). (You may ignore the fact that dup2() and fcntl() return different errno values for some error cases.) For dup2(), remember to handle the special case where oldfd equals newfd. In this case, you should check whether oldfd is valid, which can be done by, for example, checking if fcntl(oldfd, F_GETFL) succeeds. If oldfd is not valid, then the function should return –1 with errno set to EBADF.
+
+```
+$ ./dup 2>/dev/null & ls -l /proc/$(echo -n `pgrep dup`)/fd/
+[1] 364105
+total 0
+lrwx------ 1 uzu users 64 jun  8 13:05 0 -> /dev/pts/0
+lrwx------ 1 uzu users 64 jun  8 13:05 1 -> /dev/pts/0
+l-wx------ 1 uzu users 64 jun  8 13:05 2 -> /dev/null
+l-wx------ 1 uzu users 64 jun  8 13:05 3 -> /dev/null
+l-wx------ 1 uzu users 64 jun  8 13:05 34 -> /dev/null
+```
