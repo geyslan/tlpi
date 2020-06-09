@@ -48,3 +48,18 @@ l-wx------ 1 uzu users 64 jun  8 13:05 2 -> /dev/null
 l-wx------ 1 uzu users 64 jun  8 13:05 3 -> /dev/null
 l-wx------ 1 uzu users 64 jun  8 13:05 34 -> /dev/null
 ```
+
+### 5-5
+
+> Write a program to verify that duplicated file descriptors share a file offset value and open file status flags.
+
+```
+$ ./dup_check 
+[offset] old: 0 - dup: 0
+[offset] old: 4 - dup: 4
+[offset] same
+[flags] old: 0x2 - dup: 0x2
+[flags] same
+```
+
+<cite> Two different file descriptors that refer to the same open file description share a file offset value. Therefore, if the file offset is changed via one file descriptor (as a consequence of calls to read(), write(), or lseek()), this change is visible through the other file descriptor. This applies both when the two file descriptors belong to the same process and when they belong to different processes.</cite>
