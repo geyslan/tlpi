@@ -80,3 +80,13 @@ write(fd3, "Gidday", 6);
 ```
 
 - The content of the output file is `Giddayworld`. That output is due the fourth write call using `fd3`. The fd3 has its own offset because it wasn't duplicated and is registered in the system-wide *Open file table* as a different open file in despite of pointing to the same physical file.
+
+### 5-7
+
+> Implement readv() and writev() using read(), write(), and suitable functions from the malloc package (Section 7.1.2)
+
+```
+$ ./iov testing
+total bytes requested: 10092; bytes written: 10092
+total bytes requested: 10092; bytes read: 10092
+```
