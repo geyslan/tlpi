@@ -1,21 +1,17 @@
-#include <string.h>
-#include <libgen.h>
-#include <stdlib.h>
 #include "common.h"
 #include "error.h"
+#include <libgen.h>
+#include <stdlib.h>
+#include <string.h>
 
-/* POSIX Issue 7, 2018 edition
- *  12. Utility Conventions - 12.2 Utility Syntax Guidelines - Guideline 1
- *  Utility names should be between two and nine characters, inclusive.
- */
-#define APPNAMELEN 9
+#define APPNAMELEN 20
 
 static char app_name[APPNAMELEN + 1];
 
 void app_set_name(char *path)
 {
 	char *app_path, *bname;
-	int path_len;
+	int   path_len;
 
 	if (app_name[0]) {
 		warn("app_name already set to %s", app_name);
