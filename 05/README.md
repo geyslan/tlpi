@@ -62,4 +62,21 @@ $ ./dup_check
 [flags] same
 ```
 
-> <cite> Two different file descriptors that refer to the same open file description share a file offset value. Therefore, if the file offset is changed via one file descriptor (as a consequence of calls to read(), write(), or lseek()), this change is visible through the other file descriptor. This applies both when the two file descriptors belong to the same process and when they belong to different processes.</cite>
+> Two different file descriptors that refer to the same open file description share a file offset value. Therefore, if the file offset is changed via one file descriptor (as a consequence of calls to read(), write(), or lseek()), this change is visible through the other file descriptor. This applies both when the two file descriptors belong to the same process and when they belong to different processes.
+
+### 5-6
+
+> After each of the calls to write() in the following code, explain what the content of the output file would be, and why:
+
+```
+fd1 = open(file, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+fd2 = dup(fd1);
+fd3 = open(file, O_RDWR);
+write(fd1, "Hello,", 6);
+write(fd2, "world", 6);
+lseek(fd2, 0, SEEK_SET);
+write(fd1, "HELLO,", 6);
+write(fd3, "Gidday", 6);
+```
+
+- The content of the output file is `Giddayworld`. That output is due the fourth write call using `fd3`. The fd3 has its own offset because it wasn't duplicated and is registered in the system-wide *Open file table* as a different open file in despite of pointing to the same physical file.
