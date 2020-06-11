@@ -21,16 +21,20 @@ ssize_t my_readv(int fildes, const struct my_iovec *iov, int iovcnt)
 	ssize_t ncopied = 0;
 
 	openmax = sysconf(_SC_IOV_MAX);
-	if (iovcnt <= 0 || iovcnt > _SC_IOV_MAX)
-		return EINVAL;
+	if (iovcnt <= 0 || iovcnt > _SC_IOV_MAX) {
+		errno = EINVAL;
+		return -1;
+	}
 	if (!iov)
 		return -1;
 	for (int i = 0; i < iovcnt; ++i) {
 		if (!iov[i].iov_base)
 			return -1;
 
-		if (bufsize > SIZE_MAX - iov[i].iov_len)
-			return EINVAL;
+		if (bufsize > SIZE_MAX - iov[i].iov_len) {
+			errno = EINVAL;
+			return -1;
+		}
 		bufsize += iov[i].iov_len;
 	}
 
