@@ -8,6 +8,7 @@ int my_setenv(const char *name, const char *value, int overwrite)
 	char *oldval;
 	char *newvar;
 	int varlen = 0;
+	int ret = 0;
 
 	if (!name || *name == '\0' || strchr(name, '='))
 		return EINVAL;
@@ -17,7 +18,9 @@ int my_setenv(const char *name, const char *value, int overwrite)
 		if (!overwrite || strcmp(oldval, value) == 0)
 			return 0;
 		// remove variable
-		putenv((char *) name);
+		ret = putenv((char *) name);
+		if (ret)
+			return -1;
 		if (!value)
 			return 0;
 	}
@@ -31,8 +34,9 @@ int my_setenv(const char *name, const char *value, int overwrite)
 	strcat(newvar, name);
 	strcat(newvar, "=");
 	strcat(newvar, value);
-	
-	return putenv(newvar);
+
+	ret = putenv(newvar);
+	return ret ? -1 : 0;
 }
 
 int main(int argc, char *argv[])
