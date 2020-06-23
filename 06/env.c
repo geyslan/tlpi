@@ -39,6 +39,19 @@ int my_setenv(const char *name, const char *value, int overwrite)
 	return ret ? -1 : 0;
 }
 
+int my_unsetenv(const char *name)
+{
+	if (!name || *name == '\0' || strchr(name, '='))
+		return EINVAL;
+
+	while (getenv(name)) {
+		if (putenv((char *) name));
+			return -1;
+	}
+
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
 	int overwrite = 0;
@@ -53,7 +66,13 @@ int main(int argc, char *argv[])
 	printf("Testing my_setenv()\n");
 	printf(" input: %s=%s (over=%d)\n", argv[1], argv[2], overwrite);
 	ret = my_setenv(argv[1], argv[2], overwrite);	
+	errno = ret;
+	perror(" status");
+	printf(" %s=%s\n", argv[1], getenv(argv[1]));
 
+	printf("Testing my_unsetenv()\n");
+	printf(" input: %s=%s\n", argv[1], getenv(argv[1]));
+	my_unsetenv(argv[1]);
 	errno = ret;
 	perror(" status");
 	printf(" %s=%s\n", argv[1], getenv(argv[1]));
