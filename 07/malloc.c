@@ -5,8 +5,6 @@
 #include <sys/resource.h>
 #include <unistd.h>
 
-extern char end;
-
 typedef struct mchunk {
 	size_t size;
 	struct mchunk *prev;
